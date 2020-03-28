@@ -3,10 +3,7 @@ package main;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -47,7 +44,80 @@ public class Main {
                     Person p = findById(people, id);
                     if (p!=null) deleteFromList(people, p);
                     break;
+                case 8:
+                    List<String> cities = findAllCities(people);
+                    printCities(cities);
+                    break;
+                case 9:
+                    Map<String,Integer> map = countPeopleByCity(people);
+                    printMap(map);
+                    break;
+                case 10:
+                    Map<String, List<Person>> map1 = findPeopleByCities(people);
+                    printMap1(map1);
+                    break;
             }
+        }
+    }
+
+    private Map<String, List<Person>> findPeopleByCities(List<Person> people) {
+        Map<String, List<Person>> map = new HashMap<>();
+        for (Person person : people) {
+            String city = person.getCity();
+            List<Person> list = map.get(city);
+            if (list == null) {
+                list = new ArrayList<>();
+                map.put(city, list);
+            }
+            list.add(person);
+        }
+        return map;
+    }
+
+    private void printMap1(Map<String, List<Person>> map1) {
+        for (Map.Entry<String, List<Person>> entry : map1.entrySet()) {
+            System.out.println(entry.getKey());
+            for (Person person : entry.getValue()) {
+                System.out.println(person);
+            }
+            System.out.println("------------------");
+        }
+    }
+
+    private Map<String, Integer> countPeopleByCity(List<Person> people) {
+        Map<String, Integer> map = new HashMap<>();
+        for (Person person : people) {
+            String city = person.getCity();
+//            if (map.containsKey(city)) {
+//                Integer k = map.get(city);
+//                map.put(city, k+1);
+//            } else {
+//                map.put(city, 1);
+//            }
+            Integer k = map.get(city);
+            if (k==null) k = 0;
+            map.put(city, k+1);
+        }
+        return map;
+    }
+
+    private void printMap(Map<String, Integer> map) {
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+    }
+
+    private List<String> findAllCities(List<Person> people) {
+        Set<String> cities = new HashSet<>();
+        for (Person person : people) {
+            cities.add(person.getCity());
+        }
+        return new ArrayList<>(cities);
+    }
+
+    private void printCities(List<String> cities) {
+        for (String city : cities) {
+            System.out.println(city);
         }
     }
 
@@ -111,7 +181,8 @@ public class Main {
                 int month = Integer.parseInt(s[3]);
                 int year = Integer.parseInt(s[4]);
                 double rating = Double.parseDouble(s[5]);
-                Person p = new Person(id, name, LocalDate.of(year, month, day), rating);
+                String city = s[6];
+                Person p = new Person(id, name, LocalDate.of(year, month, day), rating, city);
                 list.add(p);
             }
         } catch (IOException e) {
@@ -126,7 +197,7 @@ public class Main {
             for (Person person : people) {
                 out.print(person.getId()+" "+person.getName()+" ");
                 out.print(formatter.format(person.getBirthday()));
-                out.println(" "+person.getRating());
+                out.println(" "+person.getRating()+" "+person.getCity());
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -141,6 +212,9 @@ public class Main {
         System.out.println("5. Чтение из бинарного файла");
         System.out.println("6. Родившиеся после заданного года");
         System.out.println("7. Удалить по id");
+        System.out.println("8. Список городов без повторов");
+        System.out.println("9. Количество людей по городам");
+        System.out.println("10. Списки людей по городам");
         System.out.println("--------------------------");
         System.out.println("0. Выход");
         return new Scanner(System.in).nextInt();

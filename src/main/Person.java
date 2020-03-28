@@ -9,12 +9,22 @@ public class Person implements Serializable {
     private String name;
     private LocalDate birthday;
     private double rating;
+    private String city;
 
-    public Person(int id, String name, LocalDate birthday, double rating) {
+    public Person(int id, String name, LocalDate birthday, double rating, String city) {
         this.id = id;
         this.name = name;
         this.birthday = birthday;
         this.rating = rating;
+        this.city = city;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public int getId() {
@@ -56,13 +66,14 @@ public class Person implements Serializable {
         Person person = (Person) o;
         return id == person.id &&
                 Double.compare(person.rating, rating) == 0 &&
-                name.equals(person.name) &&
-                Objects.equals(birthday, person.birthday);
+                Objects.equals(name, person.name) &&
+                Objects.equals(birthday, person.birthday) &&
+                Objects.equals(city, person.city);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, birthday, rating);
+        return Objects.hash(id, name, birthday, rating, city);
     }
 
     @Override
@@ -72,6 +83,7 @@ public class Person implements Serializable {
                 ", name='" + name + '\'' +
                 ", birthday=" + birthday +
                 ", rating=" + rating +
+                ", city='" + city + '\'' +
                 '}';
     }
 }
